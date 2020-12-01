@@ -641,6 +641,28 @@ parse_dynamic(elf_file_t ef)
 #endif
 		}
 	}
+	/* Set bounds on all section pointers for which we know the size
+	 * If we are not a cheri kernel these are no-ops.
+	 */
+	if (ef->strtab)
+		ef->strtab = cheri_kern_setbounds(ef->strtab, ef->strsz);
+	if (ef->rel)
+		ef->rel = cheri_kern_setbounds(ef->rel, ef->relsize);
+	if (ef->pltrel)
+		ef->pltrel = cheri_kern_setbounds(ef->pltrel, ef->pltrelsize);
+	if (ef->rela)
+		ef->rela = cheri_kern_setbounds(ef->rela, ef->relasize);
+	if (ef->symtab)
+		ef->symtab = cheri_kern_setbounds(ef->symtab,
+		    ef->nchains * sizeof(Elf_Sym));
+	/*
+	 * XXX-AM: How do we get .got size?
+	 * We probably have to leave it like this or define
+	 * a symbol after GOT, in any case the got capability
+	 * would be limited by ef->address capability.
+	 */
+	/* if (ef->got) */
+	/* 	ef->got */
 
 	if (plttype == DT_RELA) {
 		ef->pltrela = (const Elf_Rela *)ef->pltrel;
