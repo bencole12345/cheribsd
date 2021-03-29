@@ -224,6 +224,11 @@ CWARNFLAGS+=	-Wno-unknown-warning-option
 .endif
 .endif
 
+.if ${COMPILER_TYPE} == "clang" && ${COMPILER_VERSION} >= 120000
+# '#pragma FENV_ACCESS' is not supported on this target - ignored
+CWARNFLAGS+=	-Wno-error=ignored-pragmas
+.endif
+
 # How to handle FreeBSD custom printf format specifiers.
 .if ${COMPILER_TYPE} == "clang"
 FORMAT_EXTENSIONS=	-D__printf__=__freebsd_kprintf__

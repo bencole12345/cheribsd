@@ -92,7 +92,7 @@ CXXFLAGS+= -ftrivial-auto-var-init=pattern
 
 # macOS linker doesn't understand the --fatal-warnings flag
 .if ${LINKER_TYPE} != "mac"
-.if defined(LD_FATAL_WARNINGS) && ${LD_FATAL_WARNINGS} == "no"
+.if 1 || (defined(LD_FATAL_WARNINGS) && ${LD_FATAL_WARNINGS} == "no")
 LDFLAGS+=	-Wl,--no-fatal-warnings
 .else
 LDFLAGS+=	-Wl,--fatal-warnings
