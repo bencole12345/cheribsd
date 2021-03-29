@@ -32,6 +32,7 @@
 #define _SYS_EVENT_H_
 
 #include <sys/_types.h>
+#include <sys/_stdint.h>
 #include <sys/queue.h>
 
 #define EVFILT_READ		(-1)
