@@ -396,7 +396,7 @@ elf_reloc_local(linker_file_t lf, char *relocbase, const void *data,
 }
 
 int
-elf_reloc_late(linker_file_t lf, Elf_Addr relocbase, const void *data,
+elf_reloc_late(linker_file_t lf, char *relocbase, const void *data,
     int type, elf_lookup_fn lookup)
 {
 
