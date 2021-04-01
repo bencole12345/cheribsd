@@ -201,10 +201,18 @@
 
 #if PAGE_SIZE == 4096
 #define VM_PAGE_BITS_ALL 0xffu
+#if defined(atomic_set_8)
 typedef uint8_t vm_page_bits_t;
+#else
+typedef uint8_t __subobject_use_container_bounds vm_page_bits_t;
+#endif
 #elif PAGE_SIZE == 8192
 #define VM_PAGE_BITS_ALL 0xffffu
+#if defined(atomic_set_16)
 typedef uint16_t vm_page_bits_t;
+#else
+typedef uint16_t __subobject_use_container_bounds vm_page_bits_t;
+#endif
 #elif PAGE_SIZE == 16384
 #define VM_PAGE_BITS_ALL 0xffffffffu
 typedef uint32_t vm_page_bits_t;
@@ -241,7 +249,7 @@ struct vm_page {
 	vm_object_t object;		/* which object am I in (O) */
 	vm_pindex_t pindex;		/* offset into object (O,P) */
 	vm_paddr_t phys_addr;		/* physical address of page (C) */
-	struct md_page md;		/* machine dependent stuff */
+	struct md_page md __subobject_use_container_bounds; 	/* machine dependent stuff */
 	u_int ref_count;		/* page references (A) */
 	u_int busy_lock;		/* busy owners lock (A) */
 	union vm_page_astate a;		/* state accessed atomically (A) */
@@ -842,7 +850,7 @@ vm_page_aflag_clear(vm_page_t m, uint16_t bits)
 	 * atomic update.  Parallel non-atomic updates to the other fields
 	 * within this word are handled properly by the atomic update.
 	 */
-	addr = (void *)&m->a;
+	addr = (void *)__bounded_addressof(m->a, sizeof(uint32_t));
 	val = bits << VM_PAGE_AFLAG_SHIFT;
 	atomic_clear_32(addr, val);
 }
@@ -862,7 +870,7 @@ vm_page_aflag_set(vm_page_t m, uint16_t bits)
 	 * atomic update.  Parallel non-atomic updates to the other fields
 	 * within this word are handled properly by the atomic update.
 	 */
-	addr = (void *)&m->a;
+	addr = (void *)__bounded_addressof(m->a, sizeof(uint32_t));
 	val = bits << VM_PAGE_AFLAG_SHIFT;
 	atomic_set_32(addr, val);
 }
@@ -1014,3 +1022,12 @@ vm_page_domain(vm_page_t m)
 
 #endif				/* _KERNEL */
 #endif				/* !_VM_PAGE_ */
+// CHERI CHANGES START
+// {
+//   "updated": 20200706,
+//   "target_type": "header",
+//   "changes_purecap": [
+//     "subobject_bounds"
+//   ]
+// }
+// CHERI CHANGES END
