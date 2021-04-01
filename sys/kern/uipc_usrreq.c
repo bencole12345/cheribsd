@@ -631,7 +631,7 @@ uipc_bindat(int fd, struct socket *so, struct sockaddr *nam, struct thread *td)
 	UNP_PCB_UNLOCK(unp);
 
 	buf = malloc(namelen + 1, M_TEMP, M_WAITOK);
-	bcopy(soun->sun_path, buf, namelen);
+	bcopy(__bounded_addressof(soun->sun_path, namelen), buf, namelen);
 	buf[namelen] = 0;
 
 restart:
@@ -1518,7 +1518,7 @@ unp_connectat(int fd, struct socket *so, struct sockaddr *nam,
 	if (len <= 0)
 		return (EINVAL);
 	soun = (struct sockaddr_un *)nam;
-	bcopy(soun->sun_path, buf, len);
+	bcopy(__bounded_addressof(soun->sun_path, len), buf, len);
 	buf[len] = 0;
 
 	unp = sotounpcb(so);
@@ -2996,6 +2996,7 @@ DB_SHOW_COMMAND(unpcb, db_show_unpcb)
 //   "updated": 20200706,
 //   "target_type": "kernel",
 //   "changes_purecap": [
+//     "subobject_bounds",
 //     "kdb"
 //   ]
 // }
