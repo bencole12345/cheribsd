@@ -91,7 +91,7 @@ typedef struct {
 } Elf_relaent;
 
 typedef struct elf_file {
-	struct linker_file lf;		/* Common fields */
+	struct linker_file lf __subobject_member_used_for_c_inheritance; /* Common fields */
 
 	int		preloaded;
 	caddr_t		address;	/* Relocation address */
@@ -1755,7 +1755,8 @@ link_elf_strtab_get(linker_file_t lf, caddr_t *strtab)
 //   "target_type": "kernel",
 //   "changes_purecap": [
 //     "pointer_as_integer",
-//     "kdb"
+//     "kdb",
+//     "subobject_bounds"
 //   ]
 // }
 // CHERI CHANGES END
